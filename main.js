@@ -8,7 +8,7 @@ const weatherIcon = document.getElementById("weatherImage");
 async function checkweather(city) {
     const response = await fetch(APIurl + city + `&appid=${APIKey}`);
     const output = await response.json();
-    
+    console.log(output);
     if (document.getElementById("location")) {
         document.getElementById("location").innerHTML = output.name;
         document.getElementById("temp").innerHTML = Math.floor(output.main.feels_like) + "°";
@@ -136,56 +136,3 @@ document.getElementById("cityInput").addEventListener("keydown", function(e) {
     }
   }
 });
-
-
-
-// ============= Keyboard Shortcut for Search Overlay =============
-document.addEventListener("keydown", function(e) {
-  if (e.ctrlKey && e.key.toLowerCase() === "k") {
-    e.preventDefault();
-    document.getElementById("overlay").style.display = "grid";
-    document.getElementById("cityInput").focus();
-  }if (e.key === "Escape") {
-    e.preventDefault();
-    document.getElementById("overlay").style.display = "none";
-  }
-});
-
-
-const x = document.getElementById("demo");
-
-function getLocation() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(success, error);
-  } else { 
-    if (x) {
-      x.innerHTML = "Geolocation is not supported by this browser.";
-    }
-  }
-}
-
-function success(position) {
-  if (x) {
-    x.innerHTML = "Latitude: " + position.coords.latitude + 
-    "<br>Longitude: " + position.coords.longitude;
-  }
-}
-
-function error(err) {
-  if (x) {
-    switch (err.code) {
-      case err.PERMISSION_DENIED:
-        x.innerHTML = "User denied the request for Geolocation.";
-        break;
-      case err.POSITION_UNAVAILABLE:
-        x.innerHTML = "Location information is unavailable.";
-        break;
-      case err.TIMEOUT:
-        x.innerHTML = "The request to get user location timed out.";
-        break;
-      default:
-        x.innerHTML = "An unknown error occurred.";
-        break;
-    }
-  }
-}

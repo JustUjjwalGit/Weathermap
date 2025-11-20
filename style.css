@@ -24,7 +24,8 @@ body {
   background-color: var(--bg-main);
   font-family: "Roboto Condensed", sans-serif;
   color: var(--text-primary);
-  user-select: text;
+  user-select: none;
+  /* overflow: hidden; */
 }
 
 
@@ -33,7 +34,7 @@ body {
   overflow: hidden;
   background-color: var(--bg-main);
   padding: 20px 10px;
-  margin-bottom: 0;
+  margin: 2vh 2vw 0 2vw;
 }
 
 .header a {
@@ -66,26 +67,52 @@ body {
 
 .mainBox {
   width: 95vw;
-  height: 89vh;
+  height: 85vh;
   margin-left: 2vw;
   margin-right: 2vw;
   border: solid 1px var(--border-color);
+  border-radius: 30px;
 }
 
 /* Hero box */
 .heroBox {
   float: left;
-  width: 49.5%;
   height: 100%;
-  border: solid 1px var(--border-color);
+
 }
 
 /* Content Box */
 .contentBox {
   float: right;
-  width: 50%;
-  height: 100%;
+  width: 40%;
+  height: 90%;
+  margin: 5vh 3vw 0 0;
   border: solid 1px var(--border-color);
+  border-radius: 15px;
+  padding-top: 2vh;
+  
+}
+hr.dotted {
+  border: 2px dotted var(--border-color);
+  width: 90%;
+}
+.contentBox h1 {
+  padding-left: 3vw;
+  color: var(--text-secondary);
+  font-size: 2em;
+  font-weight: 400;
+  width: fit-content;
+}
+
+.ContactImage {
+  width: 1em;
+  margin: 1vh .5vw 0 0;
+}
+
+.contentBox h2 {
+  padding-left: 3vw;
+  color: var(--text-primary);
+  font-size: 2em;
 }
 
 /* Input box  */
