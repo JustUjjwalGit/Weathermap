@@ -99,7 +99,6 @@ hr.dotted {
 .contentBox h1 {
   padding-left: 3vw;
   color: var(--text-secondary);
-  font-size: 2em;
   font-weight: 400;
   width: fit-content;
 }
@@ -113,6 +112,7 @@ hr.dotted {
   padding-left: 3vw;
   color: var(--text-primary);
   font-size: 2em;
+  width: fit-content;
 }
 
 /* Input box  */
