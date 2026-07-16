@@ -1,82 +1,302 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weathermap — Premium Weather</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="style.css">
-  <title>Weathermap</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-
 <body>
 
+  <!-- ═══ ANIMATED BACKGROUND ═══ -->
+  <div class="bg-glow"></div>
+  <div class="bg-noise"></div>
 
-  <!-- Header  -->
-  <div class="header">
-    <a class="logo" href="index.html">Weathermap</a>
+  <!-- ═══ HEADER / NAV ═══ -->
+  <header class="header">
+    <a class="logo" href="#" data-nav="home">Weathermap</a>
     <div class="header-right">
-
-      <div class="form__group field">
-        <input class="form__field" placeholder=" ">
-        <label for="name" class="form__label">Location</label>
+      <div class="search-group">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="searchInput" placeholder="Search city..." autocomplete="off">
+        <button id="searchBtn" aria-label="Search"><i class="fas fa-magnifying-glass-location"></i></button>
       </div>
-      <button id="btn" type="button"><i class="fa-solid fa-magnifying-glass-location"></i></button>
-
-      <a href="index.html">Home</a>
-      <a href="map.html">Map</a>
-      <a href="index.html">About</a>
+      <button id="geoBtn" class="icon-btn" aria-label="My Location"><i class="fas fa-location-dot"></i></button>
+      <button id="themeBtn" class="icon-btn theme-btn" aria-label="Toggle theme">
+        <i class="fas fa-moon"></i>
+      </button>
+      <nav class="nav-links">
+        <a href="#" class="nav-link active" data-nav="home">Home</a>
+        <a href="#" class="nav-link" data-nav="forecast">Forecast</a>
+        <a href="#" class="nav-link" data-nav="map">Map</a>
+        <a href="#" class="nav-link" data-nav="about">About</a>
+      </nav>
+      <button class="hamburger" id="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button>
     </div>
+  </header>
+
+  <!-- ═══ MOBILE NAV OVERLAY ═══ -->
+  <div class="mobile-nav" id="mobileNav">
+    <a href="#" class="nav-link" data-nav="home">Home</a>
+    <a href="#" class="nav-link" data-nav="forecast">Forecast</a>
+    <a href="#" class="nav-link" data-nav="map">Map</a>
+    <a href="#" class="nav-link" data-nav="about">About</a>
   </div>
 
-  <div id="overlay">
-    <div class="input_box">
-      <div id="suggestions"></div>
+  <!-- ════════════════════════════════════════════════════════════ -->
+  <!--  HOME SECTION                                              -->
+  <!-- ════════════════════════════════════════════════════════════ -->
+  <section id="section-home" class="page-section active">
+
+    <!-- Skeleton loader (visible while loading) -->
+    <div class="skeleton-loader" id="homeSkeleton">
+      <div class="skeleton-card main-skeleton">
+        <div class="skeleton-line w-40"></div>
+        <div class="skeleton-line w-25"></div>
+        <div class="skeleton-block w-30 h-40"></div>
+        <div class="skeleton-line w-20"></div>
+        <div class="skeleton-line w-35"></div>
+      </div>
+      <div class="skeleton-card detail-skeleton">
+        <div class="skeleton-line w-60"></div>
+        <div class="skeleton-line w-45"></div>
+        <div class="skeleton-line w-50"></div>
+        <div class="skeleton-line w-55"></div>
+        <div class="skeleton-line w-40"></div>
+        <div class="skeleton-line w-50"></div>
+        <div class="skeleton-line w-45"></div>
+      </div>
     </div>
-  </div>
 
+    <!-- Actual content (hidden while loading) -->
+    <div class="home-content" id="homeContent" style="display:none;">
 
-  <!-- Hero Box -->
-  <div class="mainBox">
-    <div class="heroBox">
+      <!-- Left — hero display -->
+      <div class="hero-section fade-in">
+        <div class="hero-main">
+          <h1 class="city-name" id="location">—</h1>
+          <p class="condition" id="weatherCondetion">Loading…</p>
+          <img src="svg/clouds.png" id="weatherImage" class="weather-icon" alt="Weather icon">
+          <div class="temp-wrap">
+            <span class="temp-number" id="temp">--°</span>
+          </div>
+          <div class="hi-lo">
+            <span id="highTemp">H: --°</span>
+            <span class="dot-divider">·</span>
+            <span id="lowTemp">L: --°</span>
+          </div>
+        </div>
+      </div>
 
+      <!-- Right — detail cards -->
+      <div class="detail-grid fade-in-delayed">
+        <div class="detail-card">
+          <div class="detail-icon"><i class="fas fa-clock"></i></div>
+          <div class="detail-info">
+            <span class="detail-label">Local Time</span>
+            <span class="detail-value" id="localTime">--:--</span>
+          </div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-icon"><img src="svg/sunrise.svg" alt="Sunrise"></div>
+          <div class="detail-info">
+            <span class="detail-label">Sunrise</span>
+            <span class="detail-value" id="sunrise">--:--</span>
+          </div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-icon"><img src="svg/sunrise.svg" alt="Sunset" style="transform:rotate(180deg)"></div>
+          <div class="detail-info">
+            <span class="detail-label">Sunset</span>
+            <span class="detail-value" id="sunset">--:--</span>
+          </div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-icon"><img src="svg/waterDrop.svg" alt="Humidity"></div>
+          <div class="detail-info">
+            <span class="detail-label">Humidity</span>
+            <span class="detail-value" id="humidity">--%</span>
+          </div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-icon"><img src="svg/thermometer.svg" alt="Feels Like"></div>
+          <div class="detail-info">
+            <span class="detail-label">Feels Like</span>
+            <span class="detail-value" id="feelsLike">--°</span>
+          </div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-icon"><img src="svg/Pressure.svg" alt="Pressure"></div>
+          <div class="detail-info">
+            <span class="detail-label">Pressure</span>
+            <span class="detail-value" id="pressure">-- hPa</span>
+          </div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-icon"><i class="fas fa-eye"></i></div>
+          <div class="detail-info">
+            <span class="detail-label">Visibility</span>
+            <span class="detail-value" id="visibility">-- km</span>
+          </div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-icon"><img src="svg/windSpeed.svg" alt="Wind"></div>
+          <div class="detail-info">
+            <span class="detail-label">Wind Speed</span>
+            <span class="detail-value" id="windSpeed">-- m/s</span>
+          </div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-icon"><i class="fas fa-sun"></i></div>
+          <div class="detail-info">
+            <span class="detail-label">UV Index</span>
+            <span class="detail-value" id="uvIndex">--</span>
+          </div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-icon"><i class="fas fa-wind"></i></div>
+          <div class="detail-info">
+            <span class="detail-label">Air Quality</span>
+            <span class="detail-value" id="airQuality">--</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-      <h1 id="location">Location</h1>
-      <h3 id="weatherCondetion">Partly Cloudy</h3>
-      <img src="svg/clouds.png" id="weatherImage">
-      <h1 id="temp">XX°</h1>
-      <h3 class="highLow" id="highTemp">High: XX°</h3>
-      <h3 class="highLow" id="lowTemp">Low: XX°</h3>
+  <!-- ════════════════════════════════════════════════════════════ -->
+  <!--  FORECAST SECTION                                          -->
+  <!-- ════════════════════════════════════════════════════════════ -->
+  <section id="section-forecast" class="page-section">
 
+    <div class="forecast-header fade-in">
+      <h2>Hourly Forecast</h2>
     </div>
 
-    <!-- Content Box -->
-    <div class="contentBox">
-      <h1>Local time</h1>
-      <h2>14:52</h2>
-      <hr class="dotted">
-
-      <h1> <img src="svg/sunrise.svg" class="ContactImage">Sunrise</h1>
-      <h2>14:52</h2>
-      <hr class="dotted">
-
-      <h1> <img src="svg/sunrise.svg" class="ContactImage">Sunset</h1>
-      <hr class="dotted">
-
-      <h1> <img src="svg/waterDrop.svg" class="ContactImage">Humidity</h1>
-      <hr class="dotted">
-
-      <h1> <img src="svg/thermometer.svg" class="ContactImage">Feels like</h1>
-      <hr class="dotted">
-
-      <h1> <img src="svg/Pressure.svg" class="ContactImage">Pressure</h1>
-      <hr class="dotted">
-
-      <h1> <img src="svg/Cloud.svg" class="ContactImage">Visibility</h1>
-      <hr class="dotted">
-
-      <h1> <img src="svg/windSpeed.svg" class="ContactImage">Wind Speed</h1>
+    <!-- Hourly forecast — horizontal scroll -->
+    <div class="hourly-scroll-wrap fade-in-delayed">
+      <div class="hourly-scroll" id="hourlyContainer">
+        <!-- populated by JS -->
+      </div>
     </div>
-    <script src="main.js"></script>
+
+    <div class="forecast-header fade-in" style="margin-top:2rem;">
+      <h2>7-Day Forecast</h2>
+    </div>
+
+    <!-- 7-day forecast -->
+    <div class="daily-grid" id="dailyContainer">
+      <!-- populated by JS -->
+    </div>
+
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════ -->
+  <!--  MAP SECTION                                               -->
+  <!-- ════════════════════════════════════════════════════════════ -->
+  <section id="section-map" class="page-section">
+    <div class="map-page-wrap fade-in">
+      <div class="map-sidebar">
+        <h2>Weather Map</h2>
+        <p class="map-sub">Click anywhere on the map to get the weather for that location.</p>
+        <div class="map-search-group">
+          <input type="text" id="mapSearchInput" placeholder="Search city on map…">
+          <button id="mapSearchBtn"><i class="fas fa-search"></i></button>
+        </div>
+        <button id="mapGeoBtn" class="map-geo-btn"><i class="fas fa-location-dot"></i> Use my location</button>
+        <div class="map-coords" id="mapCoords">Click map or search a city</div>
+        <button id="showWeatherBtn" class="primary-btn" style="display:none;">
+          <i class="fas fa-cloud-sun"></i> Show Weather
+        </button>
+      </div>
+      <div id="map" class="map-container"></div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════ -->
+  <!--  ABOUT SECTION                                             -->
+  <!-- ════════════════════════════════════════════════════════════ -->
+  <section id="section-about" class="page-section">
+    <div class="about-wrap fade-in">
+
+      <div class="about-hero">
+        <h1>About Weathermap</h1>
+        <p class="about-tagline">A premium weather experience, built with passion.</p>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-card">
+          <i class="fas fa-cloud-sun"></i>
+          <h3>Project Description</h3>
+          <p>Weathermap is a clean, modern weather dashboard that provides real-time weather data, hourly and 7-day forecasts, an interactive map, and air quality information — all wrapped in a premium dark-themed interface.</p>
+        </div>
+        <div class="about-card">
+          <i class="fas fa-list-check"></i>
+          <h3>Features</h3>
+          <ul class="about-list">
+            <li>Real-time current weather data</li>
+            <li>Hourly &amp; 7-day weather forecasts</li>
+            <li>Interactive weather map</li>
+            <li>Air quality &amp; UV index</li>
+            <li>Dark / Light theme switching</li>
+            <li>Geolocation support</li>
+            <li>Search any city worldwide</li>
+            <li>Fully responsive design</li>
+          </ul>
+        </div>
+        <div class="about-card">
+          <i class="fas fa-code"></i>
+          <h3>Technologies Used</h3>
+          <ul class="about-list">
+            <li>HTML5 &amp; CSS3</li>
+            <li>Vanilla JavaScript</li>
+            <li>OpenWeatherMap API</li>
+            <li>Leaflet.js</li>
+            <li>Font Awesome</li>
+          </ul>
+        </div>
+        <div class="about-card">
+          <i class="fas fa-bolt"></i>
+          <h3>Why This Project?</h3>
+          <p>This was created as a personal learning project to explore working with APIs, asynchronous JavaScript, responsive design, and building a polished user interface from scratch.</p>
+        </div>
+      </div>
+
+      <!-- Developer section -->
+      <div class="developer-section">
+        <div class="dev-avatar">
+          <i class="fas fa-user-astronaut"></i>
+        </div>
+        <h2>Developer</h2>
+        <p class="dev-name">Ujjwal</p>
+        <p class="dev-desc">Student Developer from India</p>
+        <p class="dev-desc">Interested in Web Development and Computer Science</p>
+        <div class="dev-links">
+          <a href="https://github.com/ujjwalsingh2002" target="_blank" rel="noopener" class="github-btn">
+            <i class="fab fa-github"></i> GitHub
+          </a>
+          <a href="mailto:ujjwal@example.com" class="contact-btn">
+            <i class="fas fa-envelope"></i> Contact
+          </a>
+        </div>
+      </div>
+
+      <!-- Credits -->
+      <div class="credits">
+        <h3>Credits</h3>
+        <p>Powered by <a href="https://openweathermap.org" target="_blank" rel="noopener">OpenWeatherMap</a> API</p>
+        <p>Maps by <a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a> &amp; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></p>
+        <p>Icons by <a href="https://fontawesome.com" target="_blank" rel="noopener">Font Awesome</a></p>
+        <p class="copyright">&copy; 2024 — Made with curiosity by Ujjwal</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ SCRIPTS ═══ -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="main.js"></script>
 </body>
-
 </html>
