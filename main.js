@@ -437,6 +437,17 @@ $("#showWeatherBtn").addEventListener("click", () => {
 });
 
 /* ═══════════════════════════════════════════════════════════════
+   CURSOR GLOW (mouse-follow — dark mode only)
+   ═══════════════════════════════════════════════════════════════ */
+const cursorGlow = $("#cursorGlow");
+document.addEventListener("mousemove", (e) => {
+  const x = e.clientX;
+  const y = e.clientY;
+  cursorGlow.style.left = x + "px";
+  cursorGlow.style.top = y + "px";
+});
+
+/* ═══════════════════════════════════════════════════════════════
    INIT — load default weather on first visit
    ═══════════════════════════════════════════════════════════════ */
 // Show skeleton by default
