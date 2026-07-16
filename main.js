@@ -448,6 +448,30 @@ document.addEventListener("mousemove", (e) => {
 });
 
 /* ═══════════════════════════════════════════════════════════════
+   SCROLL REVEAL — animate About elements when they enter viewport
+   ═══════════════════════════════════════════════════════════════ */
+const revealEls = $$(".reveal");
+
+// Stagger: 0ms, 100ms, 200ms, 300ms... per element within the same group
+revealEls.forEach((el, i) => {
+  // Stagger only within .about-grid cards; standalone sections get 0
+  const siblings = el.parentElement.querySelectorAll(".reveal");
+  const indexInGroup = Array.from(siblings).indexOf(el);
+  el.style.setProperty("--reveal-delay", (indexInGroup * 100) + "ms");
+});
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("revealed");
+      revealObserver.unobserve(entry.target); // trigger only once
+    }
+  });
+}, { threshold: 0.25 });
+
+revealEls.forEach((el) => revealObserver.observe(el));
+
+/* ═══════════════════════════════════════════════════════════════
    INIT — load default weather on first visit
    ═══════════════════════════════════════════════════════════════ */
 // Show skeleton by default
