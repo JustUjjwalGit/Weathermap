@@ -322,10 +322,10 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   BACKGROUND WAVES (desktop only – inside each section)
+   GLOBAL BACKGROUND WAVES (fixed to bottom of viewport, desktop only)
    ═══════════════════════════════════════════════════════════════ */
 .background-waves {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
@@ -385,10 +385,11 @@ body {
   display: none;
   position: relative;
   z-index: 1;
-  padding: 24px;
+  padding: 24px 24px max(24px, 20vh) 24px;
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+  min-height: 80vh;
   animation: fadeIn 0.45s ease;
 }
 .page-section.active { display: block; }
